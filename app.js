@@ -13,3 +13,6 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.listen(PORT, () =>
+  console.log(`Backend can be accesses via http://localhost:${PORT}`)
+);
