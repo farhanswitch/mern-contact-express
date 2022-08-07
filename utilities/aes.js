@@ -5,7 +5,7 @@ const decrypt = (text) => {
   if (!text) {
     return false;
   } else {
-    const bytesCipher = cryptojs.AES.decrypt(text, process.env.KEY);
+    const bytesCipher = cryptojs.AES.decrypt(text.toString(), process.env.KEY);
     return bytesCipher.toString(cryptojs.enc.Utf8);
   }
 };

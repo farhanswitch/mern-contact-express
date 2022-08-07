@@ -7,9 +7,15 @@ const comparePassword = async (plainPassword, hashedPassword) => {
   return await bcrypt.compare(plainPassword, hashedPassword);
 };
 
-const checkEmail = (email) => validator.isEmail(email);
+const checkEmail = (email) => {
+  if (!email) return false;
+  return validator.isEmail(email);
+};
 
 const checkPassword = (password) => {
+  if (!password) {
+    return false;
+  }
   if (password.length < 8) {
     return false;
   } else {
@@ -17,13 +23,18 @@ const checkPassword = (password) => {
   }
 };
 
-const checkName = (name) => validator.isAlpha(name, "en-US", { ignore: " " });
+const checkName = (name) => {
+  if (!name) {
+    return false;
+  }
+  return validator.isAlpha(name, "en-US", { ignore: " " });
+};
 
-const validatingUserData = (name, email, password) => {
-  const isValidName = name ? checkName(name) : true;
+const validatingUserData = async (name, email, password) => {
+  const isValidName = checkName(name);
   const isValidEmail = checkEmail(email);
   const isValidPassword = checkPassword(password);
-  const duplicateEmail = findUser("email", email);
+  const duplicateEmail = await findUser("email", email);
 
   const possibleError = {
     "Name only contains letters and spaces": !isValidName,
