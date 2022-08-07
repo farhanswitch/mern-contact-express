@@ -48,6 +48,37 @@ app.post("/users/add", async (req, res) => {
     });
   }
 });
+
+//handle request login
+app.post("/users/login/", async (req, res) => {
+  const { email, password } = req.body;
+  const existingUser = await findUser("email", email);
+  if (!existingUser) {
+    res.json({
+      statusMsg: "Error",
+      errors: [{ msg: `There is no account with email ${email}` }],
+    });
+  } else {
+    // console.log(password);
+
+    const isValidPassword = await comparePassword(
+      decrypt(password),
+      existingUser?.password
+    );
+    console.log(isValidPassword);
+    if (!isValidPassword) {
+      res.json({
+        statusMsg: "Error",
+        errors: [{ msg: "Wrong password" }],
+      });
+    } else {
+      const jwtToken = generateJWT(existingUser._id.toString());
+      res.cookie("fstoken", jwtToken, { httpOnly: true }).json({
+        statusMsg: "Success",
+      });
+    }
+  }
+});
 //start the server
 app.listen(PORT, () =>
   console.log(`Backend can be accesses via http://localhost:${PORT}`)
