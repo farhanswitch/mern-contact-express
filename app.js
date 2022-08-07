@@ -31,6 +31,11 @@ app.get("/", (req, res) => {
 app.get("/users", async (req, res) => {
   res.json({ users: await loadAllUser() });
 });
+app.get("/auth", verifyJWT, async (req, res) => {
+  const user = await findUser("_id", req?.userId);
+  console.log(user);
+  res.json({ id: req?.userId, name: user?.name, user: req?.userData });
+});
 //handle add new user
 app.post("/users/add", async (req, res) => {
   const { name, email, password } = req.body;

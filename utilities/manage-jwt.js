@@ -29,6 +29,7 @@ const verifyJWT = (req, res, next) => {
         });
       } else {
         // console.log(result);
+        req.userData = result;
         req.userId = result.id;
         next();
       }
