@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const { loadAllUser, findUser, addUser } = require("./utilities/manage-users");
 const { decrypt } = require("./utilities/aes");
 const { generateJWT, verifyJWT } = require("./utilities/manage-jwt");
-const { loadContacts } = require("./utilities/manage-contacts");
+const { loadContacts, findContact } = require("./utilities/manage-contacts");
 const {
   comparePassword,
   validatingUserData,
@@ -41,6 +41,14 @@ app.get("/auth", verifyJWT, async (req, res) => {
 app.get("/contacts", async (req, res) => {
   const contacts = await loadContacts();
   res.json({ msg: "ok", contacts });
+});
+//handle get spesific user by id
+app.get("/contacts/:id", async (req, res) => {
+  const { id } = req.params;
+  const contact = await findContact("_id", id);
+  res.json({
+    contact,
+  });
 });
 //handle add new user
 app.post("/users/add", async (req, res) => {
