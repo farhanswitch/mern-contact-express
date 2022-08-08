@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 
 const { findUser } = require("./manage-users");
+const { findContact } = require("./manage-contacts");
 
 const comparePassword = async (plainPassword, hashedPassword) => {
   return await bcrypt.compare(plainPassword, hashedPassword);
@@ -50,4 +51,51 @@ const validatingUserData = async (name, email, password) => {
   });
   return errors;
 };
-module.exports = { comparePassword, validatingUserData };
+
+const checkDuplication = async (param, value, id) => {
+  const duplicate = await findContact(param, value);
+  console.log(param, value);
+
+  if (duplicate?._id.toString() === id) {
+    return false;
+  }
+  if (duplicate) {
+    return true;
+  } else {
+    return false;
+  }
+};
+const validatingContact = async (contact) => {
+  const { name, email, phone } = contact;
+  const id = contact._id || null;
+
+  const isValidEmail = validator.isEmail(email);
+  const isValidPhone = validator.isMobilePhone(phone, "id-ID");
+
+  console.log(email);
+  let isDuplicateName = false;
+  let isDuplicateEmail = false;
+  let isDuplicatePhone = false;
+  // if (id !== null) {
+  isDuplicateName = await checkDuplication("name", name, id);
+  isDuplicateEmail = await checkDuplication("email", email, id);
+  console.log(isDuplicateEmail);
+  isDuplicatePhone = await checkDuplication("phone", phone, id);
+  // }
+  const possibleErrors = {
+    "Email is not Valid": !isValidEmail,
+    "Phone is not Valid": !isValidPhone,
+    "Duplicate name": isDuplicateName,
+    "Duplicate email": isDuplicateEmail,
+    "Duplicate phone": isDuplicatePhone,
+  };
+  const errors = [];
+  Object.keys(possibleErrors).forEach((key) => {
+    if (possibleErrors[key] === true) {
+      errors.push(key);
+    }
+  });
+  return errors;
+};
+
+module.exports = { comparePassword, validatingUserData, validatingContact };

@@ -7,10 +7,16 @@ const bcrypt = require("bcrypt");
 const { loadAllUser, findUser, addUser } = require("./utilities/manage-users");
 const { decrypt } = require("./utilities/aes");
 const { generateJWT, verifyJWT } = require("./utilities/manage-jwt");
-const { loadContacts, findContact } = require("./utilities/manage-contacts");
+const {
+  loadContacts,
+  findContact,
+  updateContact,
+  deleteContact,
+} = require("./utilities/manage-contacts");
 const {
   comparePassword,
   validatingUserData,
+  validatingContact,
 } = require("./utilities/validation");
 const PORT = 4000;
 
@@ -98,9 +104,40 @@ app.post("/users/login/", async (req, res) => {
     }
   }
 });
+//handle edit user
+app.patch("/contacts/edit/", (req, res) => {
+  const contact = req.body;
+  validatingContact(contact).then((errors) => {
+    if (errors.length === 0) {
+      updateContact(contact).then((updatedCount) => {
+        if (updatedCount === 1) {
+          res.json({ msg: "Contact Edited", statusMsg: "Success" });
+        } else {
+          res.json({ msg: "Contact is exists", statusMsg: "Nothing changed" });
+        }
+      });
+    } else {
+      res.json({
+        statusMsg: "Error",
+        msg: `Details : ${errors}`,
+      });
+    }
+  });
+});
 //handle logging out user
 app.delete("/users/logout", (req, res) => {
   res.clearCookie("fstoken").json({ msg: "logged-out" });
+});
+//handle delete contact
+app.delete("/contacts/delete/:id", async (req, res) => {
+  const { id } = req.params;
+  const deletedCount = await deleteContact("_id", id);
+
+  if (deletedCount === 1) {
+    res.json({ msg: "ok" });
+  } else if (!deletedCount) {
+    res.json({ msg: "error" });
+  }
 });
 //start the server
 app.listen(PORT, () =>
