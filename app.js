@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const { loadAllUser, findUser, addUser } = require("./utilities/manage-users");
 const { decrypt } = require("./utilities/aes");
 const { generateJWT, verifyJWT } = require("./utilities/manage-jwt");
+const { loadContacts } = require("./utilities/manage-contacts");
 const {
   comparePassword,
   validatingUserData,
@@ -83,6 +84,10 @@ app.post("/users/login/", async (req, res) => {
       });
     }
   }
+});
+//handle logging out user
+app.delete("/users/logout", (req, res) => {
+  res.clearCookie("fstoken").json({ msg: "logged-out" });
 });
 //start the server
 app.listen(PORT, () =>
