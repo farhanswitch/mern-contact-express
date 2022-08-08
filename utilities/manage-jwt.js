@@ -8,7 +8,7 @@ const generateJWT = (id) => {
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "10s",
+      expiresIn: "10m",
     }
   );
 };
@@ -18,14 +18,14 @@ const verifyJWT = (req, res, next) => {
   if (!token) {
     res.json({
       statusMsg: "Error",
-      errors: [{ msg: "You have no credential. Please Login" }],
+      errors: [{ msg: "You have no access id. Please Login" }],
     });
   } else {
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, result) => {
       if (err) {
         res.json({
           statusMsg: "Error",
-          errors: [{ msg: "Invalid Credentials" }],
+          errors: [{ msg: "Invalid access id" }],
         });
       } else {
         // console.log(result);

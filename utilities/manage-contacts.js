@@ -3,7 +3,11 @@ const ObjectId = require("mongodb").ObjectId;
 
 const loadContacts = async () => {
   await client.connect();
-  const result = await contactCollection.find({}).toArray();
+  const result = await contactCollection
+    .find({})
+    .sort({ name: 1 })
+    .collation({ locale: "en", caseLevel: false })
+    .toArray();
   client.close();
   return result;
 };

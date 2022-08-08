@@ -31,6 +31,10 @@ app.use(
 app.use(cookieParser());
 
 //route
+//check api
+app.get("/check", (req, res) => {
+  res.json({ msg: "ok" });
+});
 //root
 app.get("/", (req, res) => {
   res.json({ msg: "Success" });
@@ -41,16 +45,16 @@ app.get("/users", async (req, res) => {
 });
 app.get("/auth", verifyJWT, async (req, res) => {
   const user = await findUser("_id", req?.userId);
-  console.log(user);
+
   res.json({ id: req?.userId, name: user?.name, user: req?.userData });
 });
 //handle get all contact
-app.get("/contacts", async (req, res) => {
+app.get("/contacts", verifyJWT, async (req, res) => {
   const contacts = await loadContacts();
   res.json({ msg: "ok", contacts });
 });
 //handle get spesific user by id
-app.get("/contacts/:id", async (req, res) => {
+app.get("/contacts/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
   const contact = await findContact("_id", id);
   res.json({
@@ -60,6 +64,7 @@ app.get("/contacts/:id", async (req, res) => {
 //handle add new user
 app.post("/users/add", async (req, res) => {
   const { name, email, password } = req.body;
+  console.log(req.body);
   const decryptedPassword = decrypt(password);
   const errors = await validatingUserData(name, email, decryptedPassword);
   if (errors.length === 0) {
@@ -75,7 +80,7 @@ app.post("/users/add", async (req, res) => {
   }
 });
 //handle new contact
-app.post("/contacts/add/", (req, res) => {
+app.post("/contacts/add/", verifyJWT, (req, res) => {
   const contact = req.body;
   validatingContact(contact).then((errors) => {
     console.log(errors);
@@ -97,6 +102,7 @@ app.post("/contacts/add/", (req, res) => {
 //handle request login
 app.post("/users/login/", async (req, res) => {
   const { email, password } = req.body;
+  console.log(req.body);
   const existingUser = await findUser("email", email);
   if (!existingUser) {
     res.json({
@@ -125,7 +131,7 @@ app.post("/users/login/", async (req, res) => {
   }
 });
 //handle edit user
-app.patch("/contacts/edit/", (req, res) => {
+app.patch("/contacts/edit/", verifyJWT, (req, res) => {
   const contact = req.body;
   validatingContact(contact).then((errors) => {
     if (errors.length === 0) {
@@ -145,11 +151,11 @@ app.patch("/contacts/edit/", (req, res) => {
   });
 });
 //handle logging out user
-app.delete("/users/logout", (req, res) => {
+app.delete("/users/logout", verifyJWT, (req, res) => {
   res.clearCookie("fstoken").json({ msg: "logged-out" });
 });
 //handle delete contact
-app.delete("/contacts/delete/:id", async (req, res) => {
+app.delete("/contacts/delete/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
   const deletedCount = await deleteContact("_id", id);
 
