@@ -37,6 +37,11 @@ app.get("/auth", verifyJWT, async (req, res) => {
   console.log(user);
   res.json({ id: req?.userId, name: user?.name, user: req?.userData });
 });
+//handle get all contact
+app.get("/contacts", async (req, res) => {
+  const contacts = await loadContacts();
+  res.json({ msg: "ok", contacts });
+});
 //handle add new user
 app.post("/users/add", async (req, res) => {
   const { name, email, password } = req.body;

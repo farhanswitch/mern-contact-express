@@ -1,12 +1,5 @@
-const { MongoClient } = require("mongodb");
+const { client, contactCollection } = require("./connect-db");
 const ObjectId = require("mongodb").ObjectId;
-
-const url = "mongodb://localhost:27017";
-const client = new MongoClient(url);
-const dbName = "contact-mf";
-
-const db = client.db(dbName);
-const contactCollection = db.collection("contact");
 
 const loadContacts = async () => {
   await client.connect();
