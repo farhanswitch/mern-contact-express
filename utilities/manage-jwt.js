@@ -8,7 +8,7 @@ const generateJWT = (id) => {
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "25m",
+      expiresIn: "10s",
     }
   );
 };

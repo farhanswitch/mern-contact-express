@@ -12,6 +12,7 @@ const {
   findContact,
   updateContact,
   deleteContact,
+  addContact,
 } = require("./utilities/manage-contacts");
 const {
   comparePassword,
@@ -73,7 +74,26 @@ app.post("/users/add", async (req, res) => {
     });
   }
 });
-
+//handle new contact
+app.post("/contacts/add/", (req, res) => {
+  const contact = req.body;
+  validatingContact(contact).then((errors) => {
+    console.log(errors);
+    const objOfError = errors.map((error) => {
+      return { msg: error };
+    });
+    if (errors.length === 0) {
+      addContact(contact).then((result) => {
+        res.json({ statusMsg: "Success", msg: "New contact has been added" });
+      });
+    } else {
+      res.json({
+        statusMsg: "Error",
+        errors: objOfError,
+      });
+    }
+  });
+});
 //handle request login
 app.post("/users/login/", async (req, res) => {
   const { email, password } = req.body;

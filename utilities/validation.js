@@ -71,6 +71,7 @@ const validatingContact = async (contact) => {
 
   const isValidEmail = validator.isEmail(email);
   const isValidPhone = validator.isMobilePhone(phone, "id-ID");
+  const isValidName = validator.isAlpha(name, "en-US", { ignore: " " });
 
   console.log(email);
   let isDuplicateName = false;
@@ -83,6 +84,7 @@ const validatingContact = async (contact) => {
   isDuplicatePhone = await checkDuplication("phone", phone, id);
   // }
   const possibleErrors = {
+    "Name only contain letters and spaces": !isValidName,
     "Email is not Valid": !isValidEmail,
     "Phone is not Valid": !isValidPhone,
     "Duplicate name": isDuplicateName,
