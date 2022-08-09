@@ -25,7 +25,23 @@ const addUser = async (name, email, password) => {
   });
   return newUser?.insertedId;
 };
-
+const updateUser = async (name, email, role) => {
+  await client.connect();
+  const update = await usersCollection.updateOne(
+    {
+      email,
+    },
+    {
+      $set: {
+        name,
+        email,
+        role,
+      },
+    }
+  );
+  client.close();
+  return update.modifiedCount;
+};
 const delAllUser = async () => {
   await client.connect();
   await usersCollection.deleteMany({});
@@ -33,4 +49,4 @@ const delAllUser = async () => {
 };
 
 // delAllUser();
-module.exports = { loadAllUser, findUser, addUser };
+module.exports = { loadAllUser, findUser, addUser, updateUser };

@@ -52,8 +52,13 @@ const validatingUserData = async (name, email, password) => {
   return errors;
 };
 
-const checkDuplication = async (param, value, id) => {
-  const duplicate = await findContact(param, value);
+const checkDuplication = async (param, value, id, type) => {
+  let duplicate;
+  if (type === "contact") {
+    duplicate = await findContact(param, value);
+  } else if (type === "user") {
+    duplicate = await findUser(param, value);
+  }
   console.log(param, value);
 
   if (duplicate?._id.toString() === id) {
@@ -78,10 +83,10 @@ const validatingContact = async (contact) => {
   let isDuplicateEmail = false;
   let isDuplicatePhone = false;
   // if (id !== null) {
-  isDuplicateName = await checkDuplication("name", name, id);
-  isDuplicateEmail = await checkDuplication("email", email, id);
+  isDuplicateName = await checkDuplication("name", name, id, "contact");
+  isDuplicateEmail = await checkDuplication("email", email, id, "contact");
   console.log(isDuplicateEmail);
-  isDuplicatePhone = await checkDuplication("phone", phone, id);
+  isDuplicatePhone = await checkDuplication("phone", phone, id, "contact");
   // }
   const possibleErrors = {
     "Name only contain letters and spaces": !isValidName,
@@ -100,4 +105,34 @@ const validatingContact = async (contact) => {
   return errors;
 };
 
-module.exports = { comparePassword, validatingUserData, validatingContact };
+const validatingEditUser = async (id, name, email, role) => {
+  const isValidName = checkName(name);
+  const isValidEmail = checkEmail(email);
+  const isValidRole = role === 1 || role === 2 || role === 3 ? true : false;
+  let duplicateEmail = await findUser("email", email);
+
+  if (id === duplicateEmail?._id.toString()) {
+    duplicateEmail = false;
+  }
+
+  const possibleError = {
+    "Name only contains letters and spaces": !isValidName,
+    "Email is not valid": !isValidEmail,
+    "Email already registered": duplicateEmail ? true : false,
+    "Invalid role": !isValidRole,
+  };
+  let errors = [];
+  Object.keys(possibleError).forEach((key) => {
+    if (possibleError[key] === true) {
+      errors.push({ msg: key });
+    }
+  });
+  return errors;
+};
+
+module.exports = {
+  comparePassword,
+  validatingUserData,
+  validatingEditUser,
+  validatingContact,
+};

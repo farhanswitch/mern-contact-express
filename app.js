@@ -4,7 +4,12 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
 
-const { loadAllUser, findUser, addUser } = require("./utilities/manage-users");
+const {
+  loadAllUser,
+  findUser,
+  addUser,
+  updateUser,
+} = require("./utilities/manage-users");
 const { decrypt } = require("./utilities/aes");
 const { generateJWT, verifyJWT } = require("./utilities/manage-jwt");
 const {
@@ -17,6 +22,7 @@ const {
 const {
   comparePassword,
   validatingUserData,
+  validatingEditUser,
   validatingContact,
 } = require("./utilities/validation");
 const PORT = 4000;
@@ -43,6 +49,12 @@ app.get("/", (req, res) => {
 app.get("/users", async (req, res) => {
   res.json({ users: await loadAllUser() });
 });
+//handle get spesific user with id
+app.get("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  res.json({ user: await findUser("_id", id) });
+});
+//handle authenticating user
 app.get("/auth", verifyJWT, async (req, res) => {
   const user = await findUser("_id", req?.userId);
 
@@ -123,14 +135,17 @@ app.post("/users/login/", async (req, res) => {
         errors: [{ msg: "Wrong password" }],
       });
     } else {
-      const jwtToken = generateJWT(existingUser._id.toString());
+      const jwtToken = generateJWT(
+        existingUser._id.toString(),
+        existingUser.role
+      );
       res.cookie("fstoken", jwtToken, { httpOnly: true }).json({
         statusMsg: "Success",
       });
     }
   }
 });
-//handle edit user
+//handle edit contact
 app.patch("/contacts/edit/", verifyJWT, (req, res) => {
   const contact = req.body;
   validatingContact(contact).then((errors) => {
@@ -146,6 +161,27 @@ app.patch("/contacts/edit/", verifyJWT, (req, res) => {
       res.json({
         statusMsg: "Error",
         msg: `Details : ${errors}`,
+      });
+    }
+  });
+});
+//handle edit user
+app.patch("/users/edit/", (req, res) => {
+  const { _id, name, email, role } = req.body;
+  validatingEditUser(_id, name, email, role).then((errors) => {
+    if (errors.length === 0) {
+      updateUser(name, email, role).then((updatedCount) => {
+        if (updatedCount === 1) {
+          res.json({ msg: "User Edited", statusMsg: "Success" });
+        } else {
+          res.json({ msg: "User is exists", statusMsg: "Nothing changed" });
+        }
+      });
+    } else {
+      console.log(errors);
+      res.json({
+        statusMsg: "Error",
+        errors,
       });
     }
   });
