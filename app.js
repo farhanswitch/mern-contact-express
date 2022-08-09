@@ -47,8 +47,8 @@ app.get("/", (req, res) => {
   res.json({ msg: "Success" });
 });
 //get all users
-app.get("/users", async (req, res) => {
-  res.json({ users: await loadAllUser() });
+app.get("/users", verifyJWT, async (req, res) => {
+  res.json({ users: await loadAllUser(), role: req.userData.role });
 });
 //handle get spesific user with id
 app.get("/users/:id", verifyJWT, async (req, res) => {
