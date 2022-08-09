@@ -29,11 +29,12 @@ const addUser = async (name, email, password) => {
   });
   return newUser?.insertedId;
 };
-const updateUser = async (name, email, role) => {
+const updateUser = async (id, name, email, role) => {
+  console.log(id);
   await client.connect();
   const update = await usersCollection.updateOne(
     {
-      email,
+      _id: ObjectId(id),
     },
     {
       $set: {
@@ -46,6 +47,23 @@ const updateUser = async (name, email, role) => {
   client.close();
   return update.modifiedCount;
 };
+const deleteUser = async (param, value) => {
+  await client.connect();
+
+  if (param === "_id") {
+    const deletedUser = await usersCollection.deleteOne({
+      [param]: ObjectId(value),
+    });
+    client.close();
+    return deletedUser.deletedCount;
+  } else {
+    const deletedUser = await usersCollection.deleteOne({
+      [param]: value,
+    });
+    client.close();
+    return deletedUser.deletedCount;
+  }
+};
 const delAllUser = async () => {
   await client.connect();
   await usersCollection.deleteMany({});
@@ -53,4 +71,4 @@ const delAllUser = async () => {
 };
 
 // delAllUser();
-module.exports = { loadAllUser, findUser, addUser, updateUser };
+module.exports = { loadAllUser, findUser, addUser, updateUser, deleteUser };

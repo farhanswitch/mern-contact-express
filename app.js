@@ -9,6 +9,7 @@ const {
   findUser,
   addUser,
   updateUser,
+  deleteUser,
 } = require("./utilities/manage-users");
 const { decrypt } = require("./utilities/aes");
 const { generateJWT, verifyJWT } = require("./utilities/manage-jwt");
@@ -185,7 +186,7 @@ app.patch("/users/edit/", verifyJWT, (req, res) => {
     const { _id, name, email, role } = req.body;
     validatingEditUser(_id, name, email, role).then((errors) => {
       if (errors.length === 0) {
-        updateUser(name, email, role).then((updatedCount) => {
+        updateUser(_id, name, email, role).then((updatedCount) => {
           if (updatedCount === 1) {
             res.json({ msg: "User Edited", statusMsg: "Success" });
           } else {
@@ -213,6 +214,22 @@ app.delete("/contacts/delete/:id", verifyJWT, async (req, res) => {
   } else {
     const { id } = req.params;
     const deletedCount = await deleteContact("_id", id);
+
+    if (deletedCount === 1) {
+      res.json({ msg: "ok" });
+    } else if (!deletedCount) {
+      res.json({ msg: "error" });
+    }
+  }
+});
+//handle delete user
+app.delete("/users/delete/:id", verifyJWT, async (req, res) => {
+  const { id } = req.params;
+  if (req.userData.role !== 1) {
+    res.status(403).send("Forbidden");
+  } else {
+    const { id } = req.params;
+    const deletedCount = await deleteUser("_id", id);
 
     if (deletedCount === 1) {
       res.json({ msg: "ok" });

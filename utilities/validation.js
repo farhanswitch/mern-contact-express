@@ -111,7 +111,7 @@ const validatingEditUser = async (id, name, email, role) => {
   const isValidRole = role === 1 || role === 2 || role === 3 ? true : false;
   let duplicateEmail = await findUser("email", email);
 
-  if (id === duplicateEmail?._id.toString()) {
+  if (id === duplicateEmail?._id?.toString()) {
     duplicateEmail = false;
   }
 
