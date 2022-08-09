@@ -50,9 +50,9 @@ app.get("/users", async (req, res) => {
   res.json({ users: await loadAllUser() });
 });
 //handle get spesific user with id
-app.get("/users/:id", async (req, res) => {
+app.get("/users/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
-  res.json({ user: await findUser("_id", id) });
+  res.json({ user: await findUser("_id", id), role: req.userData.role });
 });
 //handle authenticating user
 app.get("/auth", verifyJWT, async (req, res) => {
@@ -63,7 +63,7 @@ app.get("/auth", verifyJWT, async (req, res) => {
 //handle get all contact
 app.get("/contacts", verifyJWT, async (req, res) => {
   const contacts = await loadContacts();
-  res.json({ msg: "ok", contacts });
+  res.json({ msg: "ok", contacts, user: req?.userData });
 });
 //handle get spesific user by id
 app.get("/contacts/:id", verifyJWT, async (req, res) => {
@@ -71,6 +71,7 @@ app.get("/contacts/:id", verifyJWT, async (req, res) => {
   const contact = await findContact("_id", id);
   res.json({
     contact,
+    role: req.userData.role,
   });
 });
 //handle add new user
@@ -93,23 +94,27 @@ app.post("/users/add", async (req, res) => {
 });
 //handle new contact
 app.post("/contacts/add/", verifyJWT, (req, res) => {
-  const contact = req.body;
-  validatingContact(contact).then((errors) => {
-    console.log(errors);
-    const objOfError = errors.map((error) => {
-      return { msg: error };
+  if (req.userData.role !== 1 && req.userData?.role !== 2) {
+    res.status(403).send("Forbidden");
+  } else {
+    const contact = req.body;
+    validatingContact(contact).then((errors) => {
+      console.log(errors);
+      const objOfError = errors.map((error) => {
+        return { msg: error };
+      });
+      if (errors.length === 0) {
+        addContact(contact).then((result) => {
+          res.json({ statusMsg: "Success", msg: "New contact has been added" });
+        });
+      } else {
+        res.json({
+          statusMsg: "Error",
+          errors: objOfError,
+        });
+      }
     });
-    if (errors.length === 0) {
-      addContact(contact).then((result) => {
-        res.json({ statusMsg: "Success", msg: "New contact has been added" });
-      });
-    } else {
-      res.json({
-        statusMsg: "Error",
-        errors: objOfError,
-      });
-    }
-  });
+  }
 });
 //handle request login
 app.post("/users/login/", async (req, res) => {
@@ -147,44 +152,55 @@ app.post("/users/login/", async (req, res) => {
 });
 //handle edit contact
 app.patch("/contacts/edit/", verifyJWT, (req, res) => {
-  const contact = req.body;
-  validatingContact(contact).then((errors) => {
-    if (errors.length === 0) {
-      updateContact(contact).then((updatedCount) => {
-        if (updatedCount === 1) {
-          res.json({ msg: "Contact Edited", statusMsg: "Success" });
-        } else {
-          res.json({ msg: "Contact is exists", statusMsg: "Nothing changed" });
-        }
-      });
-    } else {
-      res.json({
-        statusMsg: "Error",
-        msg: `Details : ${errors}`,
-      });
-    }
-  });
+  if (req.userData.role !== 1 && req.userData?.role !== 2) {
+    res.status(403).send("Forbidden");
+  } else {
+    const contact = req.body;
+    validatingContact(contact).then((errors) => {
+      if (errors.length === 0) {
+        updateContact(contact).then((updatedCount) => {
+          if (updatedCount === 1) {
+            res.json({ msg: "Contact Edited", statusMsg: "Success" });
+          } else {
+            res.json({
+              msg: "Contact is exists",
+              statusMsg: "Nothing changed",
+            });
+          }
+        });
+      } else {
+        res.json({
+          statusMsg: "Error",
+          msg: `Details : ${errors}`,
+        });
+      }
+    });
+  }
 });
 //handle edit user
-app.patch("/users/edit/", (req, res) => {
-  const { _id, name, email, role } = req.body;
-  validatingEditUser(_id, name, email, role).then((errors) => {
-    if (errors.length === 0) {
-      updateUser(name, email, role).then((updatedCount) => {
-        if (updatedCount === 1) {
-          res.json({ msg: "User Edited", statusMsg: "Success" });
-        } else {
-          res.json({ msg: "User is exists", statusMsg: "Nothing changed" });
-        }
-      });
-    } else {
-      console.log(errors);
-      res.json({
-        statusMsg: "Error",
-        errors,
-      });
-    }
-  });
+app.patch("/users/edit/", verifyJWT, (req, res) => {
+  if (req?.userData?.role !== 1) {
+    res.status(403).send("Forbidden");
+  } else {
+    const { _id, name, email, role } = req.body;
+    validatingEditUser(_id, name, email, role).then((errors) => {
+      if (errors.length === 0) {
+        updateUser(name, email, role).then((updatedCount) => {
+          if (updatedCount === 1) {
+            res.json({ msg: "User Edited", statusMsg: "Success" });
+          } else {
+            res.json({ msg: "User is exists", statusMsg: "Nothing changed" });
+          }
+        });
+      } else {
+        console.log(errors);
+        res.json({
+          statusMsg: "Error",
+          errors,
+        });
+      }
+    });
+  }
 });
 //handle logging out user
 app.delete("/users/logout", verifyJWT, (req, res) => {
@@ -192,13 +208,17 @@ app.delete("/users/logout", verifyJWT, (req, res) => {
 });
 //handle delete contact
 app.delete("/contacts/delete/:id", verifyJWT, async (req, res) => {
-  const { id } = req.params;
-  const deletedCount = await deleteContact("_id", id);
+  if (req.userData.role !== 1) {
+    res.status(403).send("Forbidden");
+  } else {
+    const { id } = req.params;
+    const deletedCount = await deleteContact("_id", id);
 
-  if (deletedCount === 1) {
-    res.json({ msg: "ok" });
-  } else if (!deletedCount) {
-    res.json({ msg: "error" });
+    if (deletedCount === 1) {
+      res.json({ msg: "ok" });
+    } else if (!deletedCount) {
+      res.json({ msg: "error" });
+    }
   }
 });
 //start the server

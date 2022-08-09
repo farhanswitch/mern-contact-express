@@ -9,6 +9,9 @@ const loadAllUser = async () => {
 };
 
 const findUser = async (param, value) => {
+  if (value.length < 12) {
+    return false;
+  }
   await client.connect();
   if (param === "_id") {
     return await usersCollection.findOne({ _id: ObjectId(value) });
@@ -22,6 +25,7 @@ const addUser = async (name, email, password) => {
     name,
     email,
     password,
+    role: 3,
   });
   return newUser?.insertedId;
 };
