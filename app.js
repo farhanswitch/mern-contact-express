@@ -3,6 +3,10 @@ const app = express();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
+const passport = require("passport");
+const cookieSession = require("cookie-session");
+
+const googleRoute = require("./utilities/routes/googleRoutes");
 
 const {
   loadAllUser,
@@ -36,7 +40,17 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["fs-session"],
+    maxAge: 15 * 60,
+  })
+);
 
+app.use(passport.initialize());
+app.use(passport.session());
+app.use("/auth1", googleRoute);
 //route
 //check api
 app.get("/check", (req, res) => {

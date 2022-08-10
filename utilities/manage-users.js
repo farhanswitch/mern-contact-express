@@ -9,7 +9,7 @@ const loadAllUser = async () => {
 };
 
 const findUser = async (param, value) => {
-  if (value.length < 12) {
+  if (param === "_id" && value.length < 12) {
     return false;
   }
   await client.connect();
