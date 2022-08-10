@@ -63,17 +63,20 @@ app.get("/", (req, res) => {
 });
 //get all users
 app.get("/users", verifyJWT, async (req, res) => {
+  await client.connect();
   console.log(req.userData);
   res.json({ users: await loadAllUser(), user: req.userData });
 });
 //handle get spesific user with id
 app.get("/users/:id", verifyJWT, async (req, res) => {
+  await client.connect();
   const { id } = req.params;
   console.log(id);
   res.json({ user: await findUser("_id", id), userData: req.userData });
 });
 //handle authenticating user
 app.get("/auth", verifyJWT, async (req, res) => {
+  await client.connect();
   const user = await findUser("_id", req?.userId);
 
   res.json({ id: req?.userId, name: user?.name, user: req?.userData });
