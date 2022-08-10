@@ -16,7 +16,7 @@ router.get("/login/success", async (req, res) => {
         .cookie("fstoken", jwtToken, { httpOnly: true })
         .redirect("http://localhost:3000/dashboard");
     } else {
-      const password = email;
+      const password = "12345678";
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUserID = await addUser(name, email, hashedPassword);
       const jwtToken = generateJWT(newUserID, 3);

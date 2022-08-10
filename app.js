@@ -61,13 +61,15 @@ app.get("/", (req, res) => {
   res.json({ msg: "Success" });
 });
 //get all users
-app.get("/users", async (req, res) => {
-  res.json({ users: await loadAllUser() });
+app.get("/users", verifyJWT, async (req, res) => {
+  console.log(req.userData);
+  res.json({ users: await loadAllUser(), user: req.userData });
 });
 //handle get spesific user with id
 app.get("/users/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
-  res.json({ user: await findUser("_id", id), role: req.userData.role });
+  console.log(id);
+  res.json({ user: await findUser("_id", id), userData: req.userData });
 });
 //handle authenticating user
 app.get("/auth", verifyJWT, async (req, res) => {
@@ -239,10 +241,10 @@ app.delete("/contacts/delete/:id", verifyJWT, async (req, res) => {
 //handle delete user
 app.delete("/users/delete/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
+  console.log(id);
   if (req.userData.role !== 1) {
     res.status(403).send("Forbidden");
   } else {
-    const { id } = req.params;
     const deletedCount = await deleteUser("_id", id);
 
     if (deletedCount === 1) {
