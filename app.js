@@ -7,6 +7,7 @@ const passport = require("passport");
 const cookieSession = require("cookie-session");
 
 const googleRoute = require("./utilities/routes/googleRoutes");
+const { client } = require("./utilities/connect-db");
 
 const {
   loadAllUser,
@@ -79,11 +80,13 @@ app.get("/auth", verifyJWT, async (req, res) => {
 });
 //handle get all contact
 app.get("/contacts", verifyJWT, async (req, res) => {
+  await client.connect();
   const contacts = await loadContacts();
   res.json({ msg: "ok", contacts, user: req?.userData });
 });
 //handle get spesific user by id
 app.get("/contacts/:id", verifyJWT, async (req, res) => {
+  await client.connect();
   const { id } = req.params;
   const contact = await findContact("_id", id);
   res.json({
