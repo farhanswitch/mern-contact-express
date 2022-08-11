@@ -30,8 +30,9 @@ router.post("/add", verifyJWT, MidContact, async (req, res) => {
   const idNewContact = await addContact(req.contact);
   res.json({ statusMsg: "Success", msg: "New contact has been added" });
 });
-router.post("/edit", verifyJWT, MidContact, async (req, res) => {
-  const updatedCount = await updateContact(req.contact);
+router.patch("/edit", verifyJWT, MidContact, async (req, res) => {
+  const { _id, name, email, phone } = req.contact;
+  const updatedCount = await updateContact(_id, { name, email, phone });
   if (updatedCount === 1) {
     res.json({ msg: "Contact Edited", statusMsg: "Success" });
   } else {

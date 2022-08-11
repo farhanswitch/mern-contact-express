@@ -11,17 +11,19 @@ const addContact = async (contact) => {
   return await newContact.save()?.insertedId;
 };
 const updateContact = async (id, updateValue) => {
-  return await userModel.updateOne(
+  const updatedContact = await contactModel.updateOne(
     {
       _id: id,
     },
     {
       $set: { ...updateValue },
     }
-  )?.modifiedCount;
+  );
+  return updatedContact?.modifiedCount;
 };
 const deleteContact = async (id) => {
-  return await contactModel.deleteOne({ _id: id })?.deletedCount;
+  const deletedContact = await contactModel.deleteOne({ _id: id });
+  return deletedContact?.deletedCount;
 };
 
 module.exports = {
