@@ -1,5 +1,4 @@
 const userModel = require("../models/UserSchema");
-const { decrypt } = require("../utilities/aes");
 
 const addUser = async (user) => {
   const newUser = new userModel(user);

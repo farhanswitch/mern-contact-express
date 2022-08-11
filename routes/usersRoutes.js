@@ -4,7 +4,7 @@ const {
   loadUsers,
   updateUser,
   deleteUser,
-  findUser
+  findUser,
 } = require("../controllers/usersController");
 
 const {
@@ -24,10 +24,10 @@ router.get("/", verifyJWT, MidLoadUsers, async (req, res) => {
     res.status(500).send(error);
   }
 });
-router.get("/:id",verifyJWT,(req,res)=>{
-    const { id } = req.params;
-    res.json({ user: await findUser("_id", id), userData: req.userData });
-})
+router.get("/:id", verifyJWT, async (req, res) => {
+  const { id } = req.params;
+  res.json({ user: await findUser("_id", id), userData: req.userData });
+});
 router.post("/add", MidAddUser, async (req, res) => {
   try {
     const userId = await addUser(req.addUser);

@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 
-const { findUser } = require("./manage-users");
-const { findContact } = require("./manage-contacts");
+const { findUser } = require("../controllers/userController");
+const { findContact } = require("../controllers/contactController");
 
 const comparePassword = async (plainPassword, hashedPassword) => {
   return await bcrypt.compare(plainPassword, hashedPassword);
