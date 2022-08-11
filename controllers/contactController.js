@@ -1,7 +1,7 @@
 const contactModel = require("../models/contactSchema");
 
 const loadContacts = async () => {
-  return await contactModel.find({}).toArray();
+  return await contactModel.find({});
 };
 const findContact = async (param, value) => {
   return await contactModel.findOne({ [param]: value });

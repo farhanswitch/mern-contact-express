@@ -2,7 +2,7 @@ const router = require("express").Router();
 const passport = require("passport");
 const bcrypt = require("bcrypt");
 const GoogleStrategy = require("../strategies/googleStrategy");
-const { findUser, addUser } = require("../manage-users");
+const { findUser, addUser } = require("../../controllers/userController");
 const { generateJWT } = require("../manage-jwt");
 
 router.get("/login/success", async (req, res) => {
@@ -18,7 +18,12 @@ router.get("/login/success", async (req, res) => {
     } else {
       const password = "12345678";
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newUserID = await addUser(name, email, hashedPassword);
+      const newUserID = await addUser({
+        name,
+        email,
+        password: hashedPassword,
+        role: 3,
+      });
       const jwtToken = generateJWT(newUserID, 3);
       res
         .cookie("fstoken", jwtToken, { httpOnly: true })

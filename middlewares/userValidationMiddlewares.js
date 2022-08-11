@@ -93,6 +93,8 @@ const MidLoginUser = async (req, res, next) => {
         errors: [{ msg: "Wrong password" }],
       });
     } else {
+      console.log(existingUser._id);
+      console.log(existingUser.role);
       const jwtToken = generateJWT(
         existingUser._id.toString(),
         existingUser.role

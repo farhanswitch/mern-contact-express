@@ -5,7 +5,7 @@ const {
   updateUser,
   deleteUser,
   findUser,
-} = require("../controllers/usersController");
+} = require("../controllers/userController");
 
 const {
   MidEditUser,
@@ -43,10 +43,11 @@ router.post("/login", MidLoginUser, (req, res) => {
 });
 router.patch("/edit/:id", verifyJWT, MidEditUser, async (req, res) => {
   const { id } = req.params;
-
+  // console.log("edit", req.editUser);
+  const { name, email, role } = req.editUser;
   try {
     // res.send(await updateUser(id, req.editUser));
-    const updatedCount = await updateUser(id, req.editUser);
+    const updatedCount = await updateUser(id, { name, email, role });
     if (updatedCount === 1) {
       res.json({ msg: "User Edited", statusMsg: "Success" });
     } else {
@@ -62,6 +63,7 @@ router.delete("/delete/:id", verifyJWT, MidDeleteUser, async (req, res) => {
   try {
     // res.send(await deleteUser(id));
     const deletedCount = await deleteUser(id);
+    console.log(deletedCount);
     if (deletedCount === 1) {
       res.json({ msg: "ok" });
     } else if (!deletedCount) {

@@ -29,7 +29,7 @@ const verifyJWT = (req, res, next) => {
           errors: [{ msg: "Invalid access id" }],
         });
       } else {
-        // console.log(result);
+        console.log(result);
         req.userData = result;
         req.userId = result.id;
         next();

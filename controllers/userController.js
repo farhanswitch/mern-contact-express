@@ -6,24 +6,27 @@ const addUser = async (user) => {
 };
 
 const loadUsers = async () => {
-  return await userModel.find({}).toArray();
+  return await userModel.find({});
 };
 const findUser = async (param, value) => {
   return await userModel.findOne({ [param]: value });
 };
 const updateUser = async (id, updateValue) => {
-  return await userModel.updateOne(
+  const update = await userModel.updateOne(
     {
       _id: id,
     },
     {
       $set: { ...updateValue },
     }
-  )?.modifiedCount;
+  );
+
+  return update.modifiedCount;
 };
 
 const deleteUser = async (id) => {
-  return await userModel.deleteOne({ _id: id })?.deletedCount;
+  const deletedUser = await userModel.deleteOne({ _id: id });
+  return deletedUser.deletedCount;
 };
 
 module.exports = { addUser, loadUsers, updateUser, deleteUser, findUser };
