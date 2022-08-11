@@ -2,7 +2,8 @@ const userModel = require("../models/UserSchema");
 
 const addUser = async (user) => {
   const newUser = new userModel(user);
-  return await newUser.save()?.insertedId;
+  const savedUser = await newUser.save();
+  return savedUser?.insertedId;
 };
 
 const loadUsers = async () => {
