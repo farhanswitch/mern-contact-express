@@ -2,10 +2,11 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const bcrypt = require("bcrypt");
+const swaggerUI = require("swagger-ui-express");
 const passport = require("passport");
 const cookieSession = require("cookie-session");
 
+const docs = require("./docs");
 const googleRoute = require("./utilities/routes/googleRoutes");
 const { client } = require("./utilities/connect-db");
 const usersRoutes = require("./routes/usersRoutes");
@@ -35,6 +36,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(docs));
 app.use("/auth1", googleRoute);
 app.use("/users", usersRoutes);
 app.use("/contacts", contactsRoutes);
