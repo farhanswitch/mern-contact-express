@@ -30,8 +30,15 @@ router.get("/:id", verifyJWT, async (req, res) => {
 });
 router.post("/add", MidAddUser, async (req, res) => {
   try {
-    const userId = await addUser(req.addUser);
-    res.json({ statusMsg: "Success", userId: newUserID });
+    console.log(req.addUser);
+    const { name, email, hashedPassword } = req.addUser;
+    const userId = await addUser({
+      name,
+      email,
+      password: hashedPassword,
+      role: 3,
+    });
+    res.json({ statusMsg: "Success", userId });
   } catch (error) {
     res.status(500).send(error);
   }

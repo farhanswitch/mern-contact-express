@@ -3,6 +3,7 @@ const userModel = require("../models/UserSchema");
 const addUser = async (user) => {
   const newUser = new userModel(user);
   const savedUser = await newUser.save();
+  console.log(savedUser);
   return savedUser?.insertedId;
 };
 
