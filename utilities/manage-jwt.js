@@ -9,11 +9,11 @@ const generateJWT = (id, role) => {
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "5m",
+      expiresIn: "48h",
     }
   );
 };
-
+// console.log(generateJWT("62f1c19a919846b6ae3387f1", 1));
 const verifyJWT = (req, res, next) => {
   const token = req?.cookies?.fstoken;
   if (!token) {
