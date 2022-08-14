@@ -38,7 +38,7 @@ router.post("/add", MidAddUser, async (req, res) => {
       password: hashedPassword,
       role: 3,
     });
-    res.json({ statusMsg: "Success", userId });
+    res.status(200).json({ statusMsg: "Success", userId });
   } catch (error) {
     res.status(500).send(error);
   }

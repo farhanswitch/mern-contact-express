@@ -8,7 +8,7 @@ const findContact = async (param, value) => {
 };
 const addContact = async (contact) => {
   const newContact = new contactModel(contact);
-  return await newContact.save()?.insertedId;
+  return await newContact.save();
 };
 const updateContact = async (id, updateValue) => {
   const updatedContact = await contactModel.updateOne(

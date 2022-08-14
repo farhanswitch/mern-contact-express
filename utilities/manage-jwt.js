@@ -17,14 +17,14 @@ const generateJWT = (id, role) => {
 const verifyJWT = (req, res, next) => {
   const token = req?.cookies?.fstoken;
   if (!token) {
-    res.json({
+    res.status(401).json({
       statusMsg: "Error",
       errors: [{ msg: "You have no access id. Please Login" }],
     });
   } else {
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, result) => {
       if (err) {
-        res.json({
+        res.status(403).json({
           statusMsg: "Error",
           errors: [{ msg: "Invalid access id" }],
         });

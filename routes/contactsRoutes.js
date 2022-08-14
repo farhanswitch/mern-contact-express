@@ -27,8 +27,12 @@ router.get("/:id", verifyJWT, async (req, res) => {
   });
 });
 router.post("/add", verifyJWT, MidContact, async (req, res) => {
-  const idNewContact = await addContact(req.contact);
-  res.json({ statusMsg: "Success", msg: "New contact has been added" });
+  const newContact = await addContact(req.contact);
+  res.status(201).json({
+    statusMsg: "Success",
+    msg: "New contact has been added",
+    id: newContact._id,
+  });
 });
 router.patch("/edit", verifyJWT, MidContact, async (req, res) => {
   const { _id, name, email, phone } = req.contact;

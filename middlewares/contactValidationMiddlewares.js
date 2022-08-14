@@ -10,7 +10,7 @@ const MidContact = async (req, res, next) => {
       const objOfError = errors.map((error) => {
         return { msg: error };
       });
-      res.json({
+      res.status(400).json({
         statusMsg: "Error",
         errors: objOfError,
       });
