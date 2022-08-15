@@ -8,7 +8,7 @@ const addUser = async (user) => {
 };
 
 const loadUsers = async () => {
-  return await userModel.find({});
+  return await userModel.find({}).sort({ name: 1 });
 };
 const findUser = async (param, value) => {
   return await userModel.findOne({ [param]: value });
