@@ -56,7 +56,7 @@ router.patch("/edit/:id", verifyJWT, MidEditUser, async (req, res) => {
     // res.send(await updateUser(id, req.editUser));
     const updatedCount = await updateUser(id, { name, email, role });
     if (updatedCount === 1) {
-      res.json({ msg: "User Edited", statusMsg: "Success" });
+      res.json({ msg: "User has been edited", statusMsg: "Success" });
     } else {
       res.json({ msg: "User is exists", statusMsg: "Nothing changed" });
     }
