@@ -4,7 +4,7 @@ const addUser = async (user) => {
   const newUser = new userModel(user);
   const savedUser = await newUser.save();
   console.log(savedUser);
-  return savedUser?.insertedId;
+  return savedUser?._id;
 };
 
 const loadUsers = async () => {
