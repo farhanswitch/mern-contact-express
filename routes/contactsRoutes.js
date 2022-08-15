@@ -34,7 +34,7 @@ router.patch("/edit", verifyJWT, MidContact, async (req, res) => {
   const { _id, name, email, phone } = req.contact;
   const updatedCount = await updateContact(_id, { name, email, phone });
   if (updatedCount === 1) {
-    res.json({ msg: "Contact Edited", statusMsg: "Success" });
+    res.json({ msg: "Contact has been edited", statusMsg: "Success" });
   } else {
     res.json({
       msg: "Contact is exists",
