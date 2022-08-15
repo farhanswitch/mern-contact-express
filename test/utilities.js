@@ -1,0 +1,8 @@
+const token = {
+  VALID:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZWNkN2I1Njg3MDEzYTA0MDI0YTRjNyIsInJvbGUiOjEsImlhdCI6MTY2MDUzMTEwNCwiZXhwIjoxNjYwNjE3NTA0fQ.6NjzFg3r5uYQdwPvBhQfGylQp0KMyOJwz3hIksb_shc",
+  INVALID:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZWNkN2I1Njg3MDEzYTA0MDI0YTRjNyIsInJvbGUiOjEsImlhdCI6MTY2MDUzMTEwNCwiZXhwIjoxNjYwNjE3NTA0fQ.6NjzFg3r5uYQdwPvBhQfGylQp0KMyOJwz3hIksb_shd",
+};
+
+module.exports = { token };

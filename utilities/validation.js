@@ -90,8 +90,8 @@ const validatingContact = async (contact) => {
   // }
   const possibleErrors = {
     "Name only contain letters and spaces": !isValidName,
-    "Email is not Valid": !isValidEmail,
-    "Phone is not Valid": !isValidPhone,
+    "Email is not valid": !isValidEmail,
+    "Phone is not valid": !isValidPhone,
     "Duplicate name": isDuplicateName,
     "Duplicate email": isDuplicateEmail,
     "Duplicate phone": isDuplicatePhone,
