@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const bcrypt = require("bcrypt");
 const {
   addUser,
   loadUsers,
@@ -14,8 +15,10 @@ const {
   MidDeleteUser,
   MidLoginUser,
 } = require("../middlewares/userValidationMiddlewares");
+const { decrypt } = require("../utilities/aes");
 
 const { verifyJWT } = require("../utilities/manage-jwt");
+const { comparePassword } = require("../utilities/validation");
 
 router.get("/", verifyJWT, MidLoadUsers, async (req, res) => {
   try {
@@ -48,6 +51,45 @@ router.post("/login", MidLoginUser, (req, res) => {
     statusMsg: "Success",
   });
 });
+router.patch("/edit/password", verifyJWT, async (req, res) => {
+  const { id, password, newPassword } = req?.body;
+  const decryptedPassword = decrypt(password);
+  console.log(decryptedPassword);
+  const user = await findUser("_id", id);
+  if (!user) {
+    res.json({
+      statusMsg: "Error",
+      msg: "Wrong user id",
+    });
+  } else {
+    console.log(user.password);
+    const isValidPassword = await comparePassword(
+      decryptedPassword,
+      user.password
+    );
+    console.log(isValidPassword);
+    if (!isValidPassword) {
+      res.json({
+        statusMsg: "Error",
+        msg: "Wrong password",
+      });
+    } else {
+      const decryptedNewPassword = decrypt(newPassword);
+      const hashedNewPassword = await bcrypt.hash(decryptedNewPassword, 10);
+      const updatedCount = await updateUser(id, {
+        password: hashedNewPassword,
+      });
+      if (updatedCount === 1) {
+        res.json({ msg: "Password has been edited", statusMsg: "Success" });
+      } else {
+        res.json({
+          msg: "Password is not changed",
+          statusMsg: "Nothing changed",
+        });
+      }
+    }
+  }
+});
 router.patch("/edit/:id", verifyJWT, MidEditUser, async (req, res) => {
   const { id } = req.params;
   // console.log("edit", req.editUser);
@@ -64,6 +106,7 @@ router.patch("/edit/:id", verifyJWT, MidEditUser, async (req, res) => {
     res.status(500).send(error);
   }
 });
+
 router.delete("/delete/:id", verifyJWT, MidDeleteUser, async (req, res) => {
   const { id } = req.params;
 
