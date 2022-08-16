@@ -80,7 +80,7 @@ const MidLoginUser = async (req, res, next) => {
   if (!existingUser) {
     res.json({
       statusMsg: "Error",
-      errors: [{ msg: `There is no account with email ${email}` }],
+      errors: [{ msg: `Wrong email / password` }],
     });
   } else {
     const isValidPassword = await comparePassword(
@@ -90,7 +90,7 @@ const MidLoginUser = async (req, res, next) => {
     if (!isValidPassword) {
       res.json({
         statusMsg: "Error",
-        errors: [{ msg: "Wrong password" }],
+        errors: [{ msg: "Wrong email / password" }],
       });
     } else {
       console.log(existingUser._id);

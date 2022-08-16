@@ -3,7 +3,18 @@ module.exports = {
     tags: ["Contacts"],
     description: "Get all contacts",
     operationId: "getAllContact",
-    parameter: [],
+
+    parameters: [
+      {
+        name: "fstoken",
+        in: "cookie",
+        schema: {
+          token: {
+            type: "string",
+          },
+        },
+      },
+    ],
     responses: {
       200: {
         description: "contacts were obtained",
