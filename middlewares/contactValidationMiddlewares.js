@@ -35,7 +35,7 @@ const MidContact = async (req, res, next) => {
 
 const MidDeleteContact = (req, res, next) => {
   if (req?.userData?.role !== 1) {
-    res.status(403).json({ msg: "Error", statusMsg: "Forbidden" });
+    res.json({ statusMsg: "Error", errors: [{ msg: "Forbidden" }] });
   } else {
     next();
   }

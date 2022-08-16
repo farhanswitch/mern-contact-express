@@ -44,12 +44,19 @@ router.patch("/edit", verifyJWT, MidContact, async (req, res) => {
 });
 router.delete("/delete/:id", verifyJWT, MidDeleteContact, async (req, res) => {
   const { id } = req.params;
-  const deletedCount = await deleteContact(id);
 
-  if (deletedCount === 1) {
-    res.json({ msg: "ok" });
-  } else if (!deletedCount) {
-    res.json({ msg: "error" });
+  if (id.length <= 12) {
+    res.json({
+      statusMsg: "Error",
+      errors: [{ msg: "Invalid contact id" }],
+    });
+  } else {
+    const deletedCount = await deleteContact(id);
+    if (deletedCount === 1) {
+      res.json({ msg: "ok" });
+    } else if (!deletedCount) {
+      res.json({ msg: "error" });
+    }
   }
 });
 module.exports = router;
