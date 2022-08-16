@@ -61,4 +61,14 @@ describe("Test POST /contacts", () => {
         expect(res.body.errors[0].msg).toBe("uncomplete data");
       });
   });
+  it("POST /contacts/add add new contact", () => {
+    request(endpoint)
+      .post("/add")
+      .set("Cookie", [`fstoken=${token.VALID}`])
+      .send({ ...newContacts })
+      .end((err, res) => {
+        expect(res.body.statusMsg).toBe("Success");
+        expect(res.body.msg).toBe("New contact has been added");
+      });
+  });
 });

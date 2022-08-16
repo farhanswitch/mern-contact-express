@@ -1,8 +1,12 @@
 const { validatingContact } = require("../utilities/validation");
 
 const MidContact = async (req, res, next) => {
+  // console.log(req.userData.role, "zz");
   if (req.userData.role !== 1 && req.userData?.role !== 2) {
-    res.status(403).send("Forbidden");
+    res.json({
+      statusMsg: "Error",
+      errors: [{ msg: "Forbidden" }],
+    });
   } else {
     const contact = req.body;
     console.log(contact, "xx");
