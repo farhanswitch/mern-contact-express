@@ -5,18 +5,26 @@ const MidContact = async (req, res, next) => {
     res.status(403).send("Forbidden");
   } else {
     const contact = req.body;
-    const errors = await validatingContact(contact);
-    if (errors?.length !== 0) {
-      const objOfError = errors.map((error) => {
-        return { msg: error };
-      });
+    console.log(contact, "xx");
+    if (Object.keys(contact).length === 0) {
       res.json({
         statusMsg: "Error",
-        errors: objOfError,
+        errors: [{ msg: "uncomplete data" }],
       });
     } else {
-      req.contact = contact;
-      next();
+      const errors = await validatingContact(contact);
+      if (errors?.length !== 0) {
+        const objOfError = errors.map((error) => {
+          return { msg: error };
+        });
+        res.json({
+          statusMsg: "Error",
+          errors: objOfError,
+        });
+      } else {
+        req.contact = contact;
+        next();
+      }
     }
   }
 };

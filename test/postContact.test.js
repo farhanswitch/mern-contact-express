@@ -51,4 +51,14 @@ describe("Test POST /contacts", () => {
         expect(res.body.errors[0].msg).toBe("Duplicate phone");
       });
   });
+  it("POST /contacts/add without send new contact", () => {
+    request(endpoint)
+      .post("/add")
+      .set("Cookie", [`fstoken=${token.VALID}`])
+
+      .end((err, res) => {
+        expect(res.body.statusMsg).toBe("Error");
+        expect(res.body.errors[0].msg).toBe("uncomplete data");
+      });
+  });
 });

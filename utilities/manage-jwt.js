@@ -9,7 +9,7 @@ const generateJWT = (id, role) => {
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "3h",
+      expiresIn: "5m",
     }
   );
 };
