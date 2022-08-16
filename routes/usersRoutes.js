@@ -27,12 +27,13 @@ router.get("/", verifyJWT, MidLoadUsers, async (req, res) => {
     res.status(500).send(error);
   }
 });
-router.get("/:id", verifyJWT, async (req, res) => {
+router.get("/:id", verifyJWT, MidLoadUsers, async (req, res) => {
   const { id } = req.params;
-  if (!id) {
-    res.json({ user: null });
+  if (!id || id.length < 12) {
+    res.json({ statusMsg: "Error", errors: [{ msg: "Invalid user id" }] });
+  } else {
+    res.json({ user: await findUser("_id", id), userData: req.userData });
   }
-  res.json({ user: await findUser("_id", id), userData: req.userData });
 });
 router.post("/add", MidAddUser, async (req, res) => {
   try {

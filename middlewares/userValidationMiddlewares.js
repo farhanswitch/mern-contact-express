@@ -41,7 +41,7 @@ const MidLoadUsers = (req, res, next) => {
   if (req.userData.role !== 1) {
     res.status(403).json({
       statusMsg: "Error",
-      msg: "Forbidden",
+      errors: [{ msg: "Forbidden" }],
     });
   } else {
     next();
