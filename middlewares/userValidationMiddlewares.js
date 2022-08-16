@@ -10,7 +10,7 @@ const { decrypt } = require("../utilities/aes");
 const { generateJWT } = require("../utilities/manage-jwt");
 
 const MidEditUser = async (req, res, next) => {
-  if (req.userData.role !== 1) {
+  if (req.userData.role !== 1 && req.userData.role !== req.body.role) {
     res.status(403).json({
       statusMsg: "Error",
       msg: "Forbidden",

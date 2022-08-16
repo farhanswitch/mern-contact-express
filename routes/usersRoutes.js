@@ -29,6 +29,9 @@ router.get("/", verifyJWT, MidLoadUsers, async (req, res) => {
 });
 router.get("/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
+  if (!id) {
+    res.json({ user: null });
+  }
   res.json({ user: await findUser("_id", id), userData: req.userData });
 });
 router.post("/add", MidAddUser, async (req, res) => {
