@@ -40,7 +40,7 @@ const MidEditUser = async (req, res, next) => {
 const MidLoadUsers = async (req, res, next) => {
   const { id } = req.params;
   const user = await findUser("_id", id);
-  if (!user) {
+  if (!user && req.userData.role !== 1) {
     res.json({
       statusMsg: "Error",
       errors: [{ msg: "Invalid user id" }],
