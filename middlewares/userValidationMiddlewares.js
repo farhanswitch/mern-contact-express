@@ -37,14 +37,23 @@ const MidEditUser = async (req, res, next) => {
   }
 };
 
-const MidLoadUsers = (req, res, next) => {
-  if (req.userData.role !== 1) {
-    res.status(403).json({
+const MidLoadUsers = async (req, res, next) => {
+  const { id } = req.params;
+  const user = await findUser("_id", id);
+  if (!user) {
+    res.json({
       statusMsg: "Error",
-      errors: [{ msg: "Forbidden" }],
+      errors: [{ msg: "Invalid user id" }],
     });
   } else {
-    next();
+    if (req.userData.role !== 1 && user?._id.toString() !== id) {
+      res.status(403).json({
+        statusMsg: "Error",
+        errors: [{ msg: "Forbidden" }],
+      });
+    } else {
+      next();
+    }
   }
 };
 
